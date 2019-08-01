@@ -212,7 +212,7 @@ class EditableTable extends React.Component {
     axios.get('http://s-parts.herokuapp.com/api/products')
       .then(function (response) {
         const { data: { data } } = response;
-        self.setState({ data: data.map(item => ({ ...item, firm: item.firm.name })) });
+        self.setState({ data: data.map(item => ({ ...item, firm: item.firm ? item.firm.name : undefined })) });
       })
       .catch(function (error) {
         console.log(error);
