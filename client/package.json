@@ -1,6 +1,6 @@
 {
-  "homepage": "https://nkosyan.github.io/SpareParts/",
-  "name": "SpareParts",
+  "homepage": ".",
+  "name": "apare-parts",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
