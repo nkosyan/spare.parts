@@ -1,0 +1,17 @@
+{
+  "files": {
+    "main.css": "/SpareParts/static/css/main.1208ce04.chunk.css",
+    "main.js": "/SpareParts/static/js/main.5a8cd989.chunk.js",
+    "main.js.map": "/SpareParts/static/js/main.5a8cd989.chunk.js.map",
+    "runtime~main.js": "/SpareParts/static/js/runtime~main.24b8ea7f.js",
+    "runtime~main.js.map": "/SpareParts/static/js/runtime~main.24b8ea7f.js.map",
+    "static/css/2.0cdb9ae6.chunk.css": "/SpareParts/static/css/2.0cdb9ae6.chunk.css",
+    "static/js/2.b87488b8.chunk.js": "/SpareParts/static/js/2.b87488b8.chunk.js",
+    "static/js/2.b87488b8.chunk.js.map": "/SpareParts/static/js/2.b87488b8.chunk.js.map",
+    "index.html": "/SpareParts/index.html",
+    "precache-manifest.f558e5df83d901cb5be7522726962266.js": "/SpareParts/precache-manifest.f558e5df83d901cb5be7522726962266.js",
+    "service-worker.js": "/SpareParts/service-worker.js",
+    "static/css/2.0cdb9ae6.chunk.css.map": "/SpareParts/static/css/2.0cdb9ae6.chunk.css.map",
+    "static/css/main.1208ce04.chunk.css.map": "/SpareParts/static/css/main.1208ce04.chunk.css.map"
+  }
+}
