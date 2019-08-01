@@ -83,7 +83,7 @@ class EditableTable extends React.Component {
 
   componentDidMount() {
     const self = this;
-    axios.get('http://localhost:8080/api/firms')
+    axios.get('http://s-parts.herokuapp.com/api/firms')
       .then(function (response) {
         const { data: { data } } = response;
         self.setState({ data });
@@ -114,7 +114,7 @@ class EditableTable extends React.Component {
 
 
         const self = this;
-        axios.put(`http://localhost:8080/api/firms/${_id}`, updatedRow)
+        axios.put(`http://s-parts.herokuapp.com/api/firms/${_id}`, updatedRow)
           .then(function (response) {
             const { data: { data } } = response;
             newData.splice(index, 1, data);
@@ -151,7 +151,7 @@ class EditableTable extends React.Component {
 
   delete(_id) {
     const self = this;
-    axios.delete(`http://localhost:8080/api/firms/${_id}`)
+    axios.delete(`http://s-parts.herokuapp.com/api/firms/${_id}`)
       .then(function (response) {
         const newData = [...self.state.data];
         const index = newData.findIndex(item => _id === item._id);

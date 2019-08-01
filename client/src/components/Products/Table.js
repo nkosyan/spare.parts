@@ -209,7 +209,7 @@ class EditableTable extends React.Component {
 
   componentDidMount() {
     const self = this;
-    axios.get('http://localhost:8080/api/products')
+    axios.get('http://s-parts.herokuapp.com/api/products')
       .then(function (response) {
         const { data: { data } } = response;
         self.setState({ data: data.map(item => ({ ...item, firm: item.firm.name })) });
@@ -217,7 +217,7 @@ class EditableTable extends React.Component {
       .catch(function (error) {
         console.log(error);
       });
-    axios.get('http://localhost:8080/api/firms')
+    axios.get('http://s-parts.herokuapp.com/api/firms')
       .then(function (response) {
         const { data: { data } } = response;
         self.setState({ firms: data });
@@ -255,7 +255,7 @@ class EditableTable extends React.Component {
 
 
         const self = this;
-        axios.put(`http://localhost:8080/api/products/${_id}`, updatedRow)
+        axios.put(`http://s-parts.herokuapp.com/api/products/${_id}`, updatedRow)
           .then(function (response) {
             const { data: { data } } = response;
             newData.splice(index, 1, data);
@@ -297,7 +297,7 @@ class EditableTable extends React.Component {
 
   delete(_id) {
     const self = this;
-    axios.delete(`http://localhost:8080/api/products/${_id}`)
+    axios.delete(`http://s-parts.herokuapp.com/api/products/${_id}`)
       .then(function (response) {
         const newData = [...self.state.data];
         const index = newData.findIndex(item => _id === item._id);
