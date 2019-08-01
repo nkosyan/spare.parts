@@ -25,6 +25,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/spare-parts');
 var db = mongoose.connection;
 // Setup server port
 var port = process.env.PORT || 8080;
+console.log(process.env, 777)
 // Send message for default URL
 app.get('/', (req, res) => res.send('Hello World with Express and Nodemon'));
 // Use Api routes in the App
