@@ -32,7 +32,7 @@ const create = function (req, res) {
         product.firm = req.body.firm.label;
         res.json({
             message: 'New product created!',
-            data: { ...req.body, firm: req.body.firm.label },
+            data: { ...req.body, _id: product._id, firm: req.body.firm.label },
         });
     });
 };
