@@ -21,7 +21,7 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 // Connect to Mongoose and set connection variable
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/spare-parts');
+mongoose.connect('mongodb://localhost/spare-parts'); //process.env.MONGODB_URI ||
 var db = mongoose.connection;
 // Setup server port
 var port = process.env.PORT || 8080;

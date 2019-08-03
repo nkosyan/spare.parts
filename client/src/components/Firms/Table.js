@@ -3,9 +3,10 @@ import axios from "axios";
 import { Table, Input, InputNumber, Popconfirm, Form, Button, Icon } from 'antd';
 
 import { HEADERS, ACTIONS } from '../../constants/defaults';
+import { requestFirms } from '../../actions/firms';
 
-const { NAME, CODE, FIRM, COST, SHOP_QTY, STORE_QTY } = HEADERS;
-const { ADD, CANCEL, EDIT, DELETE, SELL } = ACTIONS;
+const { NAME } = HEADERS;
+const { ADD } = ACTIONS;
 const EditableContext = React.createContext();
 
 class EditableCell extends React.Component {
@@ -81,16 +82,18 @@ class EditableTable extends React.Component {
     ];
   }
 
-  componentDidMount() {
+  componentDidMount = async () => {
     const self = this;
-    axios.get('http://s-parts.herokuapp.com/api/firms')
-      .then(function (response) {
-        const { data: { data } } = response;
-        self.setState({ data });
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    const data = await requestFirms();
+    console.log(data, 555)
+    // axios.get('http://s-parts.herokuapp.com/api/firms')
+    //   .then(function (response) {
+    //     const { data: { data } } = response;
+    //     self.setState({ data });
+    //   })
+    //   .catch(function (error) {
+    //     console.log(error);
+    //   });
   }
 
   isEditing = record => record._id === this.state.editingKey;
