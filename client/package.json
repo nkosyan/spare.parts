@@ -46,5 +46,5 @@
     "less-vars-to-js": "^1.3.0",
     "style-loader": "^0.23.1"
   },
-  "proxy": "http://s-parts.herokuapp"
+  "proxy": "https://s-parts.herokuapp"
 }
