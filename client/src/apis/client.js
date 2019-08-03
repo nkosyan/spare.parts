@@ -3,7 +3,6 @@ import axios from 'axios';
 import { API_ROOT } from '../config/env-vars';
 
 export default (headers = {}) => {
-    console.log(API_ROOT, 777)
     const service = axios.create({
         baseURL: API_ROOT,
         headers: {
@@ -34,6 +33,5 @@ export default (headers = {}) => {
     //         throw error;
     //     },
     // );
-    console.log(11111)
     return service;
 };

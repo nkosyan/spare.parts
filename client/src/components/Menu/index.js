@@ -10,20 +10,25 @@ import Products from '../Products';
 
 const links = [{
   path: '/',
+  key: 'home',
   content: 'Home',
 }, {
   path: '/firms',
+  key: 'firms',
   content: FIRMS,
 }, {
   path: '/products',
+  key: 'products',
   content: PRODUCTS,
 }];
 
 const routes = [{
   path: '/firms',
+  key: 'firms',
   component: Firms,
 }, {
   path: '/products',
+  key: 'products',
   component: Products,
 }];
 

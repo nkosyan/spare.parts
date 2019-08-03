@@ -56,7 +56,6 @@ exports.update = function (req, res) {
         // firm.update_date = Date.now;
 
         firm.save(function (err) {
-            console.log(err,firm)
             if (err) {
                 res.json(err);
             }
