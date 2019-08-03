@@ -21,7 +21,7 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 // Connect to Mongoose and set connection variable
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/spare-parts');
+mongoose.connect(process.env.MONGODB_URI ||  'mongodb://heroku_0mfn5qh8:o87vcjvprc12386gih2vnj6l4g@ds157707.mlab.com:57707/heroku_0mfn5qh8');
 var db = mongoose.connection;
 // Setup server port
 var port = process.env.PORT || 8080;
