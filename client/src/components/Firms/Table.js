@@ -1,18 +1,17 @@
 import React from 'react';
 import axios from "axios";
-import { Table, Input, InputNumber, Popconfirm, Form, Button, Icon } from 'antd';
+import { Table, Input, Popconfirm, Form, Button, Icon } from 'antd';
 
 import { HEADERS, ACTIONS } from '../../constants/defaults';
+import { loadFirms, saveFirm, deleteFirm } from '../../actions/firms';
 
-const { NAME, CODE, FIRM, COST, SHOP_QTY, STORE_QTY } = HEADERS;
-const { ADD, CANCEL, EDIT, DELETE, SELL } = ACTIONS;
+const { NAME } = HEADERS;
+const { ADD } = ACTIONS;
 const EditableContext = React.createContext();
 
 class EditableCell extends React.Component {
-  getInput = () => this.props.inputType === 'number' ? <InputNumber /> : <Input />;
-
   renderCell = ({ getFieldDecorator }) => {
-    const { editing, dataIndex, title, record, children, ...restProps } = this.props;
+    const { editing, dataIndex, record, children, ...restProps } = this.props;
     return <td {...restProps}>
       {
         editing
@@ -21,11 +20,11 @@ class EditableCell extends React.Component {
               rules: [
                 {
                   required: true,
-                  message: `Please Input ${title}!`,
+                  message: '*',
                 },
               ],
               initialValue: record[dataIndex],
-            })(this.getInput())}
+            })(<Input />)}
             </Form.Item>
           : children
       }
@@ -52,27 +51,24 @@ class EditableTable extends React.Component {
         dataIndex: 'operation',
         render: (text, record) => {
           const { editingKey } = this.state;
-          const editable = this.isEditing(record);
-          return editable
+          return this.isEditing(record)
             ? <span>
                 <EditableContext.Consumer>
                   {
-                    form => <a href="#" onClick={() => this.save(form, record._id)} style={{ marginRight: 8 }}>
-                      <Icon type="save" theme="twoTone" twoToneColor="red" />
+                    form => <a onClick={ e => { e.stopPropagation(); this.save(form, record._id) }} style={{ marginRight: 8 }}>
+                      <Icon type="save" theme="twoTone" />
                     </a>
                   }
                 </EditableContext.Consumer>
-                <Popconfirm title="Sure to cancel?" onConfirm={() => this.cancel(record._id)}>
-                  <Icon type="stop" theme="twoTone" twoToneColor="red" />
-                </Popconfirm>
+                <a onClick={e => { e.stopPropagation(); this.cancel(record._id) }}>
+                  <Icon type="stop" theme="twoTone" />
+                </a>
               </span>
           : <span>
-              <a disabled={editingKey !== ''} onClick={() => this.edit(record._id)}>
-                <Icon type="edit" theme="twoTone" twoToneColor="red" />
-              </a>
-              <a disabled={editingKey !== ''}>
-                <Popconfirm title="Sure to delete?" onConfirm={() => this.delete(record._id)}>
-                  <Icon type="delete" theme="twoTone" twoToneColor="red" />
+              <Icon type="edit" theme="twoTone" />
+              <a onClick={e => e.stopPropagation()}>
+                <Popconfirm title="Ջնջել?" onConfirm={() => this.delete(record._id)}>
+                  <Icon type="delete" theme="twoTone" />
                 </Popconfirm>
               </a>
             </span>;
@@ -81,89 +77,56 @@ class EditableTable extends React.Component {
     ];
   }
 
-  componentDidMount() {
-    const self = this;
-    axios.get('http://s-parts.herokuapp.com/api/firms')
-      .then(function (response) {
-        const { data: { data } } = response;
-        self.setState({ data });
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  }
-
-  isEditing = record => record._id === this.state.editingKey;
-
-  cancel = () => {
-    this.setState({ editingKey: '' });
+  componentDidMount = async () => {
+    const { data: { data } } = await loadFirms();
+    this.setState({ data });
   };
 
-  save(form, _id) {
-    form.validateFields((error, row) => {
-      if (error) {
-        return;
-      }
-      const newData = [...this.state.data];
-      const index = newData.findIndex(item => _id === item._id);
-      if (index > -1) {
-        const updatedRow = {
-          ...newData[index],
-          ...row,
-        };
+  isEditing = ({ _id }) => _id === this.state.editingKey;
 
+  cancel = () => this.setState({ editingKey: '' });
 
-        const self = this;
-        axios.put(`http://s-parts.herokuapp.com/api/firms/${_id}`, updatedRow)
-          .then(function (response) {
-            const { data: { data } } = response;
-            newData.splice(index, 1, data);
-            self.setState({ data: newData, editingKey: '' });
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
+  add = () => {
+    if (this.state.data.findIndex(({ _id }) => -1 === _id) > -1) return;
 
+    this.setState({ data: [{
+        _id: -1,
+        name: '',
+      },
+      ...this.state.data,
+    ], editingKey: -1 });
+  };
 
-      } else {
-        newData.push(row);
-        this.setState({ data: newData, editingKey: '' });
-      }
-    });
-  }
+  edit = key => this.setState({ editingKey: key });
 
-  add() {
-    const index = this.state.data.findIndex(item => -1 === item._id);
+  save = (form, id) => form.validateFields(async (error, row) => {
+    if (error) return;
+
+    const newData = [...this.state.data];
+    const index = newData.findIndex(({ _id }) => id === _id);
     if (index > -1) {
-      return;
+      const updatedRow = {
+        ...newData[index],
+        ...row,
+      };
+      const { data: { data } } = await saveFirm(updatedRow);
+      newData.splice(index, 1, data);
+      this.setState({ data: newData, editingKey: '' });
+    } else {
+      newData.push(row);
+      this.setState({ data: newData, editingKey: '' });
     }
-    const newRow = {
-      _id: -1,
-      name: '',
-    };
-    const newData = [newRow, ...this.state.data];
-    this.setState({ data: newData, editingKey: -1 });
-  }
+  });
 
-  edit(key) {
-    this.setState({ editingKey: key });
-  }
-
-  delete(_id) {
-    const self = this;
-    axios.delete(`http://s-parts.herokuapp.com/api/firms/${_id}`)
-      .then(function (response) {
-        const newData = [...self.state.data];
-        const index = newData.findIndex(item => _id === item._id);
-        if (index > -1) {
-          newData.splice(index, 1);
-          self.setState({ data: newData });
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  }
+  delete = async (id) => {
+    await deleteFirm(id);
+    const newData = [...this.state.data];
+    const index = newData.findIndex(({ _id }) => id === _id);
+    if (index > -1) {
+      newData.splice(index, 1);
+      this.setState({ data: newData });
+    }
+  };
 
   render() {
     const components = {
@@ -200,6 +163,11 @@ class EditableTable extends React.Component {
         rowClassName="editable-row"
         pagination={{
             onChange: this.cancel,
+        }}
+        onRow={(record) => {
+          return {
+            onClick: () => this.edit(record._id),
+          };
         }}
       />
     </EditableContext.Provider>;
