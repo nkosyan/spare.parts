@@ -1,5 +1,6 @@
-export const PRODUCTS = 'Ապրանքներ';
 export const FIRMS = 'Ֆիրմաներ';
+export const PRODUCTS = 'Ապրանքներ';
+export const SELLS = 'Վաճառքներ';
 
 export const SEARCH = 'Փնտրել';
 export const SHOP = 'Խանութ';
@@ -11,6 +12,7 @@ export const HEADERS = {
   CODE: 'Կոդ',
   FIRM: 'Ֆիրմա',
   COST: 'Ինքնարժեք',
+  PRICE: 'Ինքնարժեք',
   SHOP_QTY: 'Խանութ քանակ',
   STORE_QTY: 'Պահեստ քանակ',
 };

@@ -3,7 +3,6 @@ import { Table, Input, InputNumber, Popconfirm, Form, Button, Icon } from 'antd'
 
 import { HEADERS, ACTIONS } from '../../constants/defaults';
 import Select from '../_partials/Select';
-import Modal from '../_partials/Modal';
 import { loadFirms } from '../../actions/firms';
 import { loadProducts, saveProduct, deleteProduct } from '../../actions/products';
 
@@ -54,8 +53,6 @@ class EditableTable extends React.Component {
     order: undefined,
     offset: 0,
     current: 1,
-    visible: false,
-    record: null,
   };
 
   // getColumnSortProps = dataIndex => ({
@@ -201,7 +198,6 @@ class EditableTable extends React.Component {
                     <Icon type="delete" />
                   </Popconfirm>
                 </a>
-              <a onClick={e => { e.stopPropagation(); this.setState({ record }); this.setVisible(true) }}><Icon type="shopping-cart" /></a>
               </span>;
         },
       },
@@ -274,12 +270,6 @@ class EditableTable extends React.Component {
     }
   };
 
-  setVisible = (visible) => this.setState({ visible });
-
-  sell = (e) => {
-
-  };
-
   render() {
     const { ...otherProps } = this.props;
 
@@ -344,7 +334,6 @@ class EditableTable extends React.Component {
           };
         }}
       />
-      <Modal visible={this.state.visible} setVisible={this.setVisible} product={this.state.record} />
     </EditableContext.Provider>;
   }
 }
