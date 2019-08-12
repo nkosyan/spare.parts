@@ -1,9 +1,9 @@
-import React, {Component} from 'react';
+import React from 'react';
 import { Table, Input, InputNumber, Popconfirm, Form, Button, Icon } from 'antd';
 
 import { HEADERS, ACTIONS } from '../../constants/defaults';
 import Select from '../_partials/Select';
-import Modal from '../_partials/Modal';
+import SellModal from '../_partials/SellModal';
 import { loadFirms } from '../../actions/firms';
 import { loadProducts, saveProduct, deleteProduct } from '../../actions/products';
 
@@ -185,23 +185,25 @@ class EditableTable extends React.Component {
             ? <span>
                 <EditableContext.Consumer>
                   {
-                    form => <a onClick={e => { e.stopPropagation(); this.save(form, record._id) }} style={{ marginRight: 8 }}>
-                      <Icon type="save" theme="twoTone" />
-                    </a>
+                    form => <span onClick={e => { e.stopPropagation(); this.save(form, record._id) }} style={{ marginRight: 8 }}>
+                      <Icon type="save" theme="twoTone" style={{ cursor: 'pointer' }} />
+                    </span>
                   }
                 </EditableContext.Consumer>
-                <a onClick={e => { e.stopPropagation(); this.cancel(record._id) }}>
-                  <Icon type="stop" theme="twoTone" />
-                </a>
+                <span onClick={e => { e.stopPropagation(); this.cancel(record._id) }}>
+                  <Icon type="stop" theme="twoTone" style={{ cursor: 'pointer' }} />
+                </span>
               </span>
             : <span>
-                <Icon type="edit" />
-                <a onClick={e => e.stopPropagation()}>
+                <Icon type="edit" theme="twoTone" style={{ cursor: 'pointer' }} />
+                <span onClick={e => e.stopPropagation()}>
                   <Popconfirm title="Ջնջել?" onConfirm={() => this.delete(record._id)}>
-                    <Icon type="delete" />
+                    <Icon type="delete" theme="twoTone" style={{ cursor: 'pointer' }} />
                   </Popconfirm>
-                </a>
-              <a onClick={e => { e.stopPropagation(); this.setState({ record }); this.setVisible(true) }}><Icon type="shopping-cart" /></a>
+                </span>
+                <span onClick={e => { e.stopPropagation(); this.setState({ record }); this.setVisible(true); }}>
+                  <Icon type="shopping" theme="twoTone" style={{ cursor: 'pointer' }} />
+                </span>
               </span>;
         },
       },
@@ -276,13 +278,7 @@ class EditableTable extends React.Component {
 
   setVisible = (visible) => this.setState({ visible });
 
-  sell = (e) => {
-
-  };
-
   render() {
-    const { ...otherProps } = this.props;
-
     const components = {
       body: {
           cell: EditableCell,
@@ -326,7 +322,7 @@ class EditableTable extends React.Component {
 
 
     return <EditableContext.Provider value={this.props.form}>
-      <Button onClick={() => this.add()}>
+      <Button type="primary" onClick={this.add}>
         {ADD}
       </Button>
       <Table
@@ -335,16 +331,10 @@ class EditableTable extends React.Component {
         dataSource={this.state.data}
         columns={columns}
         rowClassName="editable-row"
-        pagination={{
-            onChange: this.cancel,
-        }}
-        onRow={(record, rowIndex) => {
-          return {
-            onClick: () => this.edit(record._id),
-          };
-        }}
+        pagination={{ onChange: this.cancel }}
+        onRow={({ _id  }) => ({ onClick: () => this.edit(_id) })}
       />
-      <Modal visible={this.state.visible} setVisible={this.setVisible} product={this.state.record} />
+      <SellModal visible={this.state.visible} setVisible={this.setVisible} product={this.state.record} />
     </EditableContext.Provider>;
   }
 }

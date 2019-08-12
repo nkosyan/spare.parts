@@ -28,6 +28,10 @@ const links = [{
 }];
 
 const routes = [{
+  path: '/',
+  key: 'home',
+  component: Home,
+}, {
   path: '/firms',
   key: 'firms',
   component: Firms,
@@ -42,6 +46,6 @@ const routes = [{
 }];
 
 export default () => <Router>
-  {links.map((link) => <Links {...link} />)}
+  <div style={{ height: '50px' }}>{links.map((link) => <Links {...link} />)}</div>
   {routes.map((route) => <Routes {...route} />)}
 </Router>;

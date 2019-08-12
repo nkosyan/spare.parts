@@ -12,7 +12,7 @@ export const saveFirm = async (data) => {
     try {
         return await saveFirmApi(data);
     } catch (error) {
-        console.log('Cannot save firms: error = ', error);
+        console.log('Cannot save firm: error = ', error);
     }
 };
 
@@ -20,6 +20,6 @@ export const deleteFirm = async (id) => {
     try {
         return await deleteFirmApi(id);
     } catch (error) {
-        console.log('Cannot delete firms: error = ', error);
+        console.log('Cannot delete firm: error = ', error);
     }
 };

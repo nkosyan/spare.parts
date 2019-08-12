@@ -9,6 +9,7 @@ router.get('/', function (req, res) {
 
 const product = require('./controllers/products');
 const firm = require('./controllers/firms');
+const sell = require('./controllers/sells');
 
 router.route('/products').get(product.index);
 router.route('/products/:product_id')
@@ -22,5 +23,13 @@ router.route('/firms/:firm_id')
   .get(firm.view)
   .put(firm.update)
   .delete(firm.delete);
+
+router.route('/sells')
+  .get(sell.index)
+  .post(sell.create);
+router.route('/sells/:sell_id')
+  .get(sell.view)
+  .put(sell.update)
+  .delete(sell.delete);
 
 module.exports = router;
