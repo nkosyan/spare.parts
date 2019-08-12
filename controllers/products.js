@@ -66,7 +66,6 @@ exports.update = function (req, res) {
         product.shop_qty = req.body.shop_qty;
 
         product.save(function (err) {
-            console.log(err,product)
             if (err) {
                 res.json(err);
             }

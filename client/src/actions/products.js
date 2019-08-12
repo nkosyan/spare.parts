@@ -12,7 +12,7 @@ export const saveProduct = async (data) => {
     try {
         return await saveProductApi(data);
     } catch (error) {
-        console.log('Cannot save firms: error = ', error);
+        console.log('Cannot save product: error = ', error);
     }
 };
 
@@ -20,6 +20,6 @@ export const deleteProduct = async (id) => {
     try {
         return await deleteProductApi(id);
     } catch (error) {
-        console.log('Cannot delete firms: error = ', error);
+        console.log('Cannot delete product: error = ', error);
     }
 };
