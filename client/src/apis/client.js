@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { API_ROOT } from '../config/env-vars';
+import { API_ROOT } from '../configs/env-vars';
 
 export default (headers = {}) => {
     const service = axios.create({

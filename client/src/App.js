@@ -1,10 +1,10 @@
 import React from 'react';
 
-import Menu from './components/Menu'
+import AppRouter from './components/AppRouter'
 import './App.css';
 
 function App() {
-  return <Menu />;
+  return <AppRouter />;
 }
 
 export default App;
