@@ -6,7 +6,7 @@ export default (headers = {}) => {
     const service = axios.create({
         baseURL: API_ROOT,
         headers: {
-            // Authorization: getAccessToken(),
+            Authorization: localStorage.getItem('token'),
             ...headers,
         },
     });

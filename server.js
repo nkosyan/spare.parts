@@ -14,6 +14,7 @@ let cors = require('cors');
 
 class HandlerGenerator {
   login (req, res) {
+    console.log(111111111111111111111111111)
     let username = req.body.username;
     let password = req.body.password;
     // For the given username fetch user from DB
@@ -34,13 +35,13 @@ class HandlerGenerator {
           token: token
         });
       } else {
-        res.send(403).json({
+        res.sendStatus(403).json({
           success: false,
           message: 'Incorrect username or password'
         });
       }
     } else {
-      res.send(400).json({
+      res.sendStatus(400).json({
         success: false,
         message: 'Authentication failed! Please check the request'
       });
@@ -72,14 +73,14 @@ function main () {
   app.use(bodyParser.json());
 
 // Connect to Mongoose and set connection variable
-  mongoose.connect(process.env.MONGODB_URI || 'mongodb://heroku_0mfn5qh8:o87vcjvprc12386gih2vnj6l4g@ds157707.mlab.com:57707/heroku_0mfn5qh8');
-  var db = mongoose.connection;
+mongoose.connect(process.env.MONGODB_URI ||  'mongodb://localhost/spare-parts');
+var db = mongoose.connection;
 // Setup server port
   var port = process.env.PORT || 8080;
   console.log(process.env, 777)
 
   // Routes & Handlers
-  app.post('/login', handlers.login);
+  app.post('/api/login', handlers.login);
   app.get('/', middleware.checkToken, handlers.index);
 
 // Send message for default URL

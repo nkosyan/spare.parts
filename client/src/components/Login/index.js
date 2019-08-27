@@ -1,20 +1,33 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Form, Icon, Input, Button } from 'antd';
-import { withRouter } from 'react-router';
+import { withRouter } from 'react-router-dom';
 
+import { loginUser } from '../../actions/users';
 const { Item } = Form;
 
 export default withRouter(Form.create({ name: 'normal_login' })(props => {
+  useEffect(() => {
+    if (localStorage.getItem('token')) {
+      props.history.push('/Products');
+    }
+  });
+
   const handleSubmit = e => {
     e.preventDefault();
-    props.form.validateFields((err, values) => {
+    props.form.validateFields(async (err, values) => {
       if (!err) {
         console.log('Received values of form: ', values);
+        const { data: { success, token }} = await loginUser(values);
+        if (success) {
+          localStorage.setItem('token', token)
+        }
         props.history.push('/Products');
       }
     });
   };
+
   const {getFieldDecorator} = props.form;
+
   return <Form onSubmit={handleSubmit} className="login-form" style={{ marginTop: '15px' }}>
     <Item>
       {getFieldDecorator('username', {

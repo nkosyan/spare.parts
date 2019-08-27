@@ -1,82 +1,24 @@
 Firm = require('../models/firms');
+helpers = require('./helpers');
 
-exports.index = function (req, res) {
-  Firm.get(function (err, firms) {
-        if (err) {
-            res.json({
-              status: "error",
-              message: err,
-            });
-        }
-        res.json({
-            status: "success",
-            message: "Firm retrieved successfully",
-            data: firms,
-        });
-    });
-};
+exports.index = (req, res) => helpers.index(req, res, Firm);
 
-const create = function (req, res) {
+exports.view = (req, res) => helpers.view(req, res, Firm);
+
+exports.update = (req, res) => {
+  if (req.params.id === '-1') {
     const firm = new Firm();
     firm.name = req.body.name;
-
-    firm.save(function (err) {
-        if (err) {
-            res.json(err);
-        }
-        res.json({
-            message: 'New firm created!',
-            data: firm
-        });
-    });
-};
-
-exports.view = function (req, res) {
-    Firm.findById(req.params.firm_id, function (err, firm) {
-    if (err) {
-        res.send(err);
+    helpers.save(req, res, firm);
+    return;
+  }
+  Firm.findById(req.params.id, (error, firm) => {
+    if (error) {
+      res.json({ success: false, error });
     }
-    res.json({
-        message: 'Firm details loading..',
-        data: firm
-    });
+    firm.name = req.body.name;
+    helpers.save(req, res, firm);
   });
 };
 
-exports.update = function (req, res) {
-    if (req.params.firm_id === '-1') {
-      create(req, res);
-      return;
-    }
-    Firm.findById(req.params.firm_id, function (err, firm) {
-        if (err) {
-            res.send(err);
-        }
-        firm.name = req.body.name;
-        // firm.update_date = Date.now;
-
-        firm.save(function (err) {
-            if (err) {
-                res.json(err);
-            }
-            res.json({
-                message: 'Firm Info updated',
-                data: firm
-            });
-        });
-    });
-};
-
-exports.delete = function (req, res) {
-    Firm.remove({
-        _id: req.params.firm_id
-    }, function (err) {
-          if (err) {
-              res.send(err);
-          }
-          res.json({
-              status: "success",
-              message: 'Firm deleted'
-          });
-    });
-};
+exports.delete = (req, res) => helpers.delete(req, res, Firm);

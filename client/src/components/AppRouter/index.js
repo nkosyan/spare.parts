@@ -1,8 +1,7 @@
-import React from 'react';
-import {BrowserRouter, Link} from 'react-router-dom';
+import React, { Fragment, useState } from 'react';
+import { BrowserRouter, Link } from 'react-router-dom';
 
-import { PRODUCTS, FIRMS } from '../../constants/defaults';
-import { isAuth, isNotAuth } from '../../configs/auth';
+import { LOGIN, LOGOUT, PRODUCTS, FIRMS } from '../../constants/defaults';
 import Links from './Links.js';
 import Routes from './Routes.js';
 import Home from '../Home';
@@ -27,7 +26,7 @@ const links = [{
 const routes = [{
   path: '/login',
   key: 'login',
-  component: isNotAuth(Login),
+  component: Login,
 }, {
   path: '/firms',
   key: 'firms',
@@ -38,15 +37,26 @@ const routes = [{
   component: Products,
 }];
 
-export default () => <BrowserRouter>
+export default () => {
+  const [isLoggedin, setIsLoggedin] = useState(!!localStorage.getItem('token'));
+  const handleLogout = () => {
+    if (isLoggedin) {
+      localStorage.removeItem('token');
+    }
+    setIsLoggedin(!isLoggedin);
+    window.location = '/login';
+  };
+
+  return <BrowserRouter>
     <div style={{ display: 'flex',
       flexDirection: 'column',
       justifyContent: 'space-between',
       height: '100vh' }}>
       <div>
-        <div>Header
-          <Link to='/login'>Login</Link>
-          {links.map((link) => <Links {...link} />)}
+        <div>
+          {isLoggedin
+            ? <Fragment><span onClick={handleLogout}>{LOGOUT}</span>{links.map((link) => <Links {...link} />)}</Fragment>
+            : <span onClick={handleLogout}>{LOGIN}</span>}
         </div>
         {routes.map((route) => <Routes {...route} />)}
       </div>
@@ -57,4 +67,5 @@ export default () => <BrowserRouter>
         borderTop: '1px solid #E7E7E7',
       }}>Footer</div>
     </div>
-  </BrowserRouter>;
+  </BrowserRouter>
+};

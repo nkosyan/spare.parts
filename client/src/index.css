@@ -93,3 +93,13 @@ input {
 {
   display:block;
 }
+ant-input {
+  border-right: none;
+  border-left: none;
+  border-top: none;
+}
+.App{
+  width: 15%;
+  text-align: left !important;
+  margin: auto;
+}

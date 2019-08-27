@@ -1,5 +1,4 @@
 import React from 'react';
-import axios from "axios";
 import { Table, Input, Popconfirm, Form, Button, Icon } from 'antd';
 
 import { HEADERS, ACTIONS } from '../../constants/defaults';
@@ -49,36 +48,33 @@ class EditableTable extends React.Component {
       },
       {
         dataIndex: 'operation',
-        render: (text, record) => {
-          const { editingKey } = this.state;
-          return this.isEditing(record)
-            ? <span>
-                <EditableContext.Consumer>
-                  {
-                    form => <a onClick={ e => { e.stopPropagation(); this.save(form, record._id) }} style={{ marginRight: 8 }}>
-                      <Icon type="save" theme="twoTone" />
-                    </a>
-                  }
-                </EditableContext.Consumer>
-                <a onClick={e => { e.stopPropagation(); this.cancel(record._id) }}>
-                  <Icon type="stop" theme="twoTone" />
-                </a>
+        render: (text, record) => this.isEditing(record)
+          ? <span>
+              <EditableContext.Consumer>
+                {
+                  form => <span onClick={ e => { e.stopPropagation(); this.save(form, record._id) }} style={{ marginRight: 8 }}>
+                    <Icon type="save" theme="twoTone" />
+                  </span>
+                }
+              </EditableContext.Consumer>
+              <span onClick={e => { e.stopPropagation(); this.cancel(record._id) }}>
+                <Icon type="stop" theme="twoTone" />
               </span>
+            </span>
           : <span>
               <Icon type="edit" theme="twoTone" />
-              <a onClick={e => e.stopPropagation()}>
+              <span onClick={e => e.stopPropagation()}>
                 <Popconfirm title="Ջնջել?" onConfirm={() => this.delete(record._id)}>
                   <Icon type="delete" theme="twoTone" />
                 </Popconfirm>
-              </a>
-            </span>;
-        },
+              </span>
+            </span>
       },
     ];
   }
 
   componentDidMount = async () => {
-    const { data: { data } } = await loadFirms();
+    const { data } = await loadFirms();
     this.setState({ data });
   };
 
@@ -109,8 +105,8 @@ class EditableTable extends React.Component {
         ...newData[index],
         ...row,
       };
-      const { data: { data } } = await saveFirm(updatedRow);
-      newData.splice(index, 1, data);
+      const aa = await saveFirm(updatedRow);console.log(aa)
+      newData.splice(index, 1, aa.data);
       this.setState({ data: newData, editingKey: '' });
     } else {
       newData.push(row);
@@ -143,7 +139,7 @@ class EditableTable extends React.Component {
         ...col,
         onCell: record => ({
             record,
-            inputType: col.dataIndex === 'shop_qty' || col.dataIndex === 'store_qty' ? 'number' : 'text',
+            inputtype: col.dataIndex === 'shop_qty' || col.dataIndex === 'store_qty' ? 'number' : 'text',
             dataIndex: col.dataIndex,
             title: col.title,
             editing: this.isEditing(record),
@@ -152,23 +148,15 @@ class EditableTable extends React.Component {
     });
 
     return <EditableContext.Provider value={this.props.form}>
-      <Button onClick={() => this.add()}>
-        {ADD}
-      </Button>
+      <Button type="primary" onClick={this.add}>{ADD}</Button>
       <Table
         components={components}
         bordered
         dataSource={this.state.data}
         columns={columns}
         rowClassName="editable-row"
-        pagination={{
-            onChange: this.cancel,
-        }}
-        onRow={(record) => {
-          return {
-            onClick: () => this.edit(record._id),
-          };
-        }}
+        pagination={{ onChange: this.cancel }}
+        onRow={({ _id }) => ({ onClick: () => this.edit(_id) })}
       />
     </EditableContext.Provider>;
   }
