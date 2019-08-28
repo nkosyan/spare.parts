@@ -42,6 +42,7 @@ export default () => {
   const handleLogout = () => {
     if (isLoggedin) {
       localStorage.removeItem('token');
+      localStorage.removeItem('isAdmin');
     }
     setIsLoggedin(!isLoggedin);
     window.location = '/login';

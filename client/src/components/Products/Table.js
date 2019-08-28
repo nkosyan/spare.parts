@@ -139,7 +139,7 @@ class EditableTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = { firms: [], data: [], editingKey: '' };
-    this.columns = [
+    const column = [
       {
         title: NAME,
         dataIndex: 'name',
@@ -177,7 +177,10 @@ class EditableTable extends React.Component {
         dataIndex: 'store_qty',
         width: '15%',
         editable: true,
-      },
+      }
+    ];
+    this.columns = localStorage.getItem('isAdmin') === 'true' ? [
+      ...column,
       {
         dataIndex: 'operation',
         render: (text, record) => {
@@ -206,6 +209,14 @@ class EditableTable extends React.Component {
                 </span>
               </span>;
         },
+      },
+    ] : [
+      ...column,
+      {
+        dataIndex: 'operation',
+        render: (text, record) => <span onClick={e => { e.stopPropagation(); this.setState({ record }); this.setVisible(true); }}>
+          <Icon type="shopping" theme="twoTone" style={{ cursor: 'pointer' }} />
+        </span>,
       },
     ];
   }

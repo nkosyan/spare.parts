@@ -17,9 +17,10 @@ export default withRouter(Form.create({ name: 'normal_login' })(props => {
     props.form.validateFields(async (err, values) => {
       if (!err) {
         console.log('Received values of form: ', values);
-        const { data: { success, token }} = await loginUser(values);
+        const { data: { success, token, isAdmin }} = await loginUser(values);
         if (success) {
           localStorage.setItem('token', token)
+          localStorage.setItem('isAdmin', isAdmin)
         }
         props.history.push('/Products');
       }

@@ -18,21 +18,21 @@ class HandlerGenerator {
     let username = req.body.username;
     let password = req.body.password;
     // For the given username fetch user from DB
-    let mockedUsername = 'admin';
-    let mockedPassword = 'password';
+    let mockedAdminUsername = 'admin';
+    let mockedAdminPassword = 'password';
+
+    let mockedUsername = 'user';
+    let mockedPassword = 'user';
 
     if (username && password) {
-      if (username === mockedUsername && password === mockedPassword) {
-        let token = jwt.sign({username: username},
-          config.secret,
-          { expiresIn: '24h' // expires in 24 hours
-          }
-        );
+      if ((username === mockedAdminUsername && password === mockedAdminPassword) || (username === mockedUsername && password === mockedPassword)) {
+        const token = jwt.sign({ username: username }, config.secret, { expiresIn: '24h' });
         // return the JWT token for the future API calls
         res.json({
           success: true,
           message: 'Authentication successful!',
-          token: token
+          token: token,
+          isAdmin: username === mockedAdminUsername
         });
       } else {
         res.sendStatus(403).json({
@@ -77,7 +77,6 @@ mongoose.connect(process.env.MONGODB_URI ||  'mongodb://localhost/spare-parts');
 var db = mongoose.connection;
 // Setup server port
   var port = process.env.PORT || 8080;
-  console.log(process.env, 777)
 
   // Routes & Handlers
   app.post('/api/login', handlers.login);

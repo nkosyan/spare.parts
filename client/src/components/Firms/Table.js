@@ -39,13 +39,14 @@ class EditableTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = { data: [], editingKey: '' };
-    this.columns = [
-      {
-        title: NAME,
-        dataIndex: 'name',
-        // width: '25%',
-        editable: true,
-      },
+    const name = {
+      title: NAME,
+      dataIndex: 'name',
+      // width: '25%',
+      editable: true,
+    };
+    this.columns = localStorage.getItem('isAdmin') === 'true' ? [
+      name,
       {
         dataIndex: 'operation',
         render: (text, record) => this.isEditing(record)
@@ -70,7 +71,8 @@ class EditableTable extends React.Component {
               </span>
             </span>
       },
-    ];
+    ] : [name];
+    console.log(this.columns)
   }
 
   componentDidMount = async () => {
