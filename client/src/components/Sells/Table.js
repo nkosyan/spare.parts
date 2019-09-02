@@ -67,7 +67,7 @@ export default () => {
       }
     }
     requestSells();
-  });
+  }, []);
   const columns = getColumns(dataSource, setDataSource);
 
   return <Table bordered columns={columns} dataSource={dataSource} />

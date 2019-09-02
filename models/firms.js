@@ -17,6 +17,8 @@ const firms = mongoose.Schema({
 
 const Firms = module.exports = mongoose.model('firms', firms);
 
-module.exports.get = function (callback, limit) {
-    Firms.find(callback).limit(limit);
+module.exports.get = function (callback, quesry = {}) {
+  const { orderBy = 'update_date', order = -1, limit, filters } = quesry;
+    console.log(callback, 555)
+    Firms.find(callback).sort({ [orderBy]: order }).limit(limit);
 };

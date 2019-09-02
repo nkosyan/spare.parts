@@ -4,8 +4,6 @@ import { Table, Input, Popconfirm, Form, Button, Icon } from 'antd';
 import { HEADERS, ACTIONS } from '../../constants/defaults';
 import { loadFirms, saveFirm, deleteFirm } from '../../actions/firms';
 
-const { NAME } = HEADERS;
-const { ADD } = ACTIONS;
 const EditableContext = React.createContext();
 
 class EditableCell extends React.Component {
@@ -38,12 +36,17 @@ class EditableCell extends React.Component {
 class EditableTable extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { data: [], editingKey: '' };
+    this.state = {
+      filteredInfo: {},
+      data: [],
+      editingKey: '',
+    };
     const name = {
-      title: NAME,
+      title: HEADERS.NAME,
       dataIndex: 'name',
-      // width: '25%',
       editable: true,
+      sortable: true,
+      filterable: true,
     };
     this.columns = localStorage.getItem('isAdmin') === 'true' ? [
       name,
@@ -72,13 +75,106 @@ class EditableTable extends React.Component {
             </span>
       },
     ] : [name];
-    console.log(this.columns)
   }
 
   componentDidMount = async () => {
     const { data } = await loadFirms();
     this.setState({ data });
   };
+
+  // componentDidUpdate(prevProps) {
+  //   if (prevProps.pagination.total < this.props.pagination.total) {
+  //     this.setState({ current: 1 });
+  //   }
+  // }
+
+  getColumnSortProps = dataIndex => ({
+    sorter: true,
+    sortOrder: this.state.columnKey === dataIndex && this.state.order,
+  });
+
+
+  getColumnSearchProps = dataIndex => ({
+    filterDropdown: <div style={{ paddingTop: 3 }}>
+      <Input
+        placeholder='Enter at least three letters'
+        value={this.state.filteredInfo[dataIndex]}
+        onChange={e => this.onChange(dataIndex, e.target.value)}
+        style={{ width: 200 }}
+      />
+      <div style={{ marginLeft: 2 }}>
+        <Button size='small' onClick={() => this.clear(dataIndex)}>
+          Clear
+        </Button>
+      </div>
+    </div>,
+    filterIcon: () => <Icon icon='search' style={{ color: this.isFiltered(dataIndex) ? '#1890ff' : undefined }} />,
+    // After FilterDropdown close, unset filter if filtered keyword length is less than minKeywordLength
+    onFilterDropdownVisibleChange: (visible) => {
+      if (!visible && this.state.filteredInfo[dataIndex] && this.state.filteredInfo[dataIndex].length < this.props.minKeywordLength) {
+        this.setState({ filteredInfo: this.getFilteredInfo(dataIndex) });
+      }
+    },
+  });
+
+  request = async ({ columnKey, order, filters: filterData } = {}) => {
+    // const {
+    //   request, data, adminId, setFilter,
+    // } = this.props;
+    const filters = filterData === null ? undefined : (filterData || this.state.filteredInfo);
+    // setFilter({ filters });
+    // request({
+    //   ...data,
+    //   adminId,
+    //   filters,
+    //   orderBy: columnKey || this.state.columnKey,
+    //   order: (order || this.state.order) === 'ascend' ? 1 : -1,
+    //   offset: this.state.offset,
+    // });
+
+    const { data } = await loadFirms({
+      orderBy: columnKey || this.state.columnKey,
+      order: (order || this.state.order) === 'ascend' ? 1 : -1,
+      filters,
+      offset: this.state.offset,
+    });
+    this.setState({ data });
+  };
+
+  isFiltered = dataIndex => this.state.filteredInfo[dataIndex]
+    && this.state.filteredInfo[dataIndex].length >= this.props.minKeywordLength;
+
+  hideClearFilter = () => Object.keys(this.state.filteredInfo).some(item => this.isFiltered(item));
+
+  getFilteredInfo = (dataIndex, value) => ({
+    ...this.state.filteredInfo,
+    [dataIndex]: value || undefined,
+  });
+
+  onChange = (dataIndex, value) => {
+    const filteredInfo = this.getFilteredInfo(dataIndex, value); console.log(filteredInfo, dataIndex, value, 111)
+    // this.props.setOffset(0);
+    this.setState({ filteredInfo, offset: 0, current: 1 }, () => {
+      if (value.length >= this.props.minKeywordLength) {
+        this.request({ filters: filteredInfo });
+      } else { // unset filter if input value's length is less than minKeywordLength
+        this.request({ filters: this.getFilteredInfo(dataIndex) });
+      }
+    });
+  };
+
+  clear = (dataIndex) => {
+    const filteredInfo = this.getFilteredInfo(dataIndex);
+    this.setState({ filteredInfo });
+    this.request({ filters: filteredInfo });
+  };
+
+  clearFilters = () => {
+    this.setState({ filteredInfo: {} });
+    this.request({ filters: null });
+  };
+
+
 
   isEditing = ({ _id }) => _id === this.state.editingKey;
 
@@ -134,23 +230,26 @@ class EditableTable extends React.Component {
     };
 
     const columns = this.columns.map(col => {
-      if (!col.editable) {
-        return col;
-      }
-      return {
+      const sortedFilteredColumns = col.sortable ? {
         ...col,
         onCell: record => ({
-            record,
-            inputtype: col.dataIndex === 'shop_qty' || col.dataIndex === 'store_qty' ? 'number' : 'text',
-            dataIndex: col.dataIndex,
-            title: col.title,
-            editing: this.isEditing(record),
+          record,
+          inputType: 'text',
+          dataIndex: col.dataIndex,
+          title: col.title,
+          editing: this.isEditing(record),
         }),
-      };
+        ...this.getColumnSortProps(col.dataIndex),
+      } : col;
+
+      return col.filterable ? {
+        ...sortedFilteredColumns,
+        ...this.getColumnSearchProps(col.dataIndex),
+      } : sortedFilteredColumns;
     });
 
     return <EditableContext.Provider value={this.props.form}>
-      <Button type="primary" onClick={this.add}>{ADD}</Button>
+      {localStorage.getItem('isAdmin') === 'true' && <Button type="primary" onClick={this.add}>{ACTIONS.ADD}</Button>}
       <Table
         components={components}
         bordered
@@ -159,9 +258,23 @@ class EditableTable extends React.Component {
         rowClassName="editable-row"
         pagination={{ onChange: this.cancel }}
         onRow={({ _id }) => ({ onClick: () => this.edit(_id) })}
+        onChange={(pagination, filters, sorter) => {
+          const { columnKey, order } = sorter;
+          console.log(columnKey, order, pagination.current, 111)
+          this.setState({
+            columnKey,
+            order,
+            // offset: this.props.pagination.onChange(pagination.current),
+            current: pagination.current,
+          }, this.request);
+        }}
       />
     </EditableContext.Provider>;
   }
 }
+
+EditableTable.defaultProps = {
+  minKeywordLength: 3
+};
 
 export default Form.create()(EditableTable);

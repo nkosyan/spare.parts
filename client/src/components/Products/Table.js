@@ -333,9 +333,7 @@ class EditableTable extends React.Component {
 
 
     return <EditableContext.Provider value={this.props.form}>
-      <Button type="primary" onClick={this.add}>
-        {ADD}
-      </Button>
+      {localStorage.getItem('isAdmin') === 'true' && <Button type="primary" onClick={this.add}>{ADD}</Button>}
       <Table
         components={components}
         bordered

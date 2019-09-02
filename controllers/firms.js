@@ -8,6 +8,7 @@ exports.view = (req, res) => helpers.view(req, res, Firm);
 exports.update = (req, res) => {
   if (req.params.id === '-1') {
     const firm = new Firm();
+
     firm.name = req.body.name;
     helpers.save(req, res, firm);
     return;

@@ -1,6 +1,6 @@
 const response = (res, error, data) => res.json(error ? { success: false, error } : { success: true, data });
 
-exports.index = (req, res, model) => model.get((error, data) => response(res, error, data));
+exports.index = (req, res, model) => model.get((error, data) => response(res, error, data), req.query);
 
 exports.save = (req, res, model, data) => model.save(error => response(res, error, data || model));
 
